@@ -11,6 +11,7 @@ const router = express.Router();
 // /api/delete-product/:id
 
 router.get("/get-products", productsController.getProducts);
+router.get("/product-export", productsController.exportProducts);
 router.get("/search-product", productsController.searchProduct);
 router.post("/create-product", productsController.createProduct);
 router.put("/edit-product-info", productsController.updateProduct);

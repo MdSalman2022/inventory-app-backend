@@ -11,6 +11,7 @@ const router = express.Router();
 /api/delete-order/:id */
 
 router.get("/get-orders", ordersController.getOrdersByFilter);
+router.get("/order-export", ordersController.exportOrders);
 router.post("/create-order", ordersController.createOrder);
 router.put("/edit-order-info", ordersController.editOrderInfo);
 router.put("/edit-order-status", ordersController.orderStatusUpdateById);

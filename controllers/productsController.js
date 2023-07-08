@@ -1,4 +1,5 @@
 const product_model = require("../schemas/productsSchema").products;
+const { Parser } = require("json2csv");
 
 exports.getProducts = async (req, res, next) => {
   try {
@@ -8,6 +9,53 @@ exports.getProducts = async (req, res, next) => {
       res.json({ success: true, products });
     } else {
       res.json({ success: false, message: "No products found" });
+    }
+  } catch (exception) {
+    console.error("Exception occurred:", exception);
+    res.status(500).send(exception);
+  }
+};
+
+exports.exportProducts = async (req, res, next) => {
+  try {
+    const products = await product_model.find();
+
+    function formatStockDate(isoTimestamp) {
+      const date = new Date(isoTimestamp);
+      const formattedDate = date.toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+        year: "2-digit",
+      });
+
+      return formattedDate;
+    }
+    const flattenedData = products.map((item) => ({
+      _id: item._id,
+      orderId: item.orderId,
+      image: item.image,
+      name: item.name,
+      phone: item.phone,
+      address: item.address,
+      district: item.district,
+      products: item.products,
+      quantity: item.quantity,
+      courier: item.courier,
+      deliveryCharge: item.deliveryCharge,
+      timestamp: formatStockDate(item.timestamp),
+    }));
+    const filename = "customer_list.csv";
+
+    const json2csvParser = new Parser();
+    const csvData = json2csvParser.parse(flattenedData);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    if (products.length > 0) {
+      res.send(csvData);
+    } else {
+      res.json({ success: false, message: "No customers found" });
     }
   } catch (exception) {
     console.error("Exception occurred:", exception);

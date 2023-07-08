@@ -1,4 +1,5 @@
 const customer_model = require("../schemas/customersSchema").customers;
+const { Parser } = require("json2csv");
 
 exports.getCustomers = async (req, res, next) => {
   try {
@@ -7,6 +8,41 @@ exports.getCustomers = async (req, res, next) => {
     // console.log(customers);
     if (customers.length > 0) {
       res.json({ success: true, customers });
+    } else {
+      res.json({ success: false, message: "No customers found" });
+    }
+  } catch (exception) {
+    console.error("Exception occurred:", exception);
+    res.status(500).send(exception);
+  }
+};
+
+exports.exportCustomers = async (req, res, next) => {
+  try {
+    const customers = await customer_model.find();
+
+    const flattenedData = customers.map((item) => ({
+      _id: item._id,
+      customer_name: item.customer_details.name,
+      customer_phone: item.customer_details.phone,
+      customer_location: item.customer_details.location,
+      customer_address: item.customer_details.address,
+      purchase_total: item.purchase.total,
+      orders_processing: item.orders.processing,
+      orders_ready: item.orders.ready,
+      orders_completed: item.orders.completed,
+      orders_returned: item.orders.returned,
+    }));
+    const filename = "customer_list.csv";
+
+    const json2csvParser = new Parser();
+    const csvData = json2csvParser.parse(flattenedData);
+
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+
+    if (customers.length > 0) {
+      res.send(csvData);
     } else {
       res.json({ success: false, message: "No customers found" });
     }

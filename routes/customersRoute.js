@@ -10,6 +10,7 @@ const router = express.Router();
 /api/customer-export */
 
 router.get("/get-customers", customersController.getCustomers);
+router.get("/customer-export", customersController.exportCustomers);
 router.get("/search-customer", customersController.getCustomerByNameOrPhone);
 router.get("/get-customer-by-id", customersController.getCustomerById);
 router.post("/create-customer", customersController.createCustomer);
