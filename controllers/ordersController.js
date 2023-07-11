@@ -7,8 +7,8 @@ exports.getOrdersByFilter = async (req, res, next) => {
 
     let orders = [];
 
-    console.log(filter);
-    console.log(courier);
+    // console.log(filter);
+    // console.log(courier);
 
     if (filter === "all") {
       orders = await order_model.find();
@@ -21,7 +21,7 @@ exports.getOrdersByFilter = async (req, res, next) => {
       orders = await order_model.find({ orderStatus: filter });
     } else if (courier) {
       orders = await order_model.find({ courier: courier });
-    } else console.log(orders);
+    }
     // console.log(orders);
     if (orders.length > 0) {
       res.json({ success: true, orders });

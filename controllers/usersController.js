@@ -3,7 +3,7 @@ const user_model = require("../schemas/usersSchema").users;
 exports.getUsers = async (req, res, next) => {
   try {
     const users = await user_model.find();
-    console.log(users);
+    // console.log(users);
 
     if (users) {
       res.json({
@@ -21,9 +21,10 @@ exports.getUsers = async (req, res, next) => {
 };
 
 exports.getUser = async (req, res, next) => {
+  console.log("uid", req.query.id);
   try {
     const user = await user_model.findOne({ authUid: req.query.id });
-
+    console.log("userinfo", user);
     if (user) {
       res.json({ success: true, user });
     } else {
@@ -37,20 +38,36 @@ exports.getUser = async (req, res, next) => {
 
 exports.editUser = async (req, res, next) => {
   try {
-    const { username, email, authUid, verified } = req.body;
+    const { username, email, authUid, verified, role } = req.body;
+
+    // console.log("edit user", req.body);
 
     const user = await user_model.findOne({ authUid: req.query.id });
 
+    console.log(user);
+
     if (user) {
-      const result = await customer.save();
+      user.username = username || user.username;
+      user.email = email || user.email;
+      user.authUid = authUid || user.authUid;
+      user.verified = verified || user.verified;
+      user.role = role || user.role;
+      user.timestamp = new Date().toISOString();
+
+      const result = await user.save();
+      console.log(result);
 
       if (result) {
-        res.json({ success: true, message: "Customer updated successfully" });
+        res.json({
+          success: true,
+          message: "User updated successfully",
+          result,
+        });
       } else {
-        res.json({ success: false, message: "Customer update failed" });
+        res.json({ success: false, message: "User updating failed" });
       }
     } else {
-      res.json({ success: false, message: "Customer not found" });
+      res.json({ success: false, message: "User not found" });
     }
   } catch (exception) {
     console.error("Exception occurred:", exception);
@@ -67,6 +84,7 @@ exports.createUser = async (req, res, next) => {
       username,
       email,
       authUid,
+      verified: false,
       timestamp: new Date().toISOString(),
     });
 
@@ -85,5 +103,21 @@ exports.createUser = async (req, res, next) => {
   } catch (exception) {
     console.error("Exception occurred:", exception);
     res.status(500).send(exception);
+  }
+};
+
+exports.deleteUser = async (req, res, next) => {
+  try {
+    const userId = req.query.id;
+    const user = await user_model.findById(userId);
+
+    if (user) {
+      await user.deleteOne();
+      res.json({ success: true, message: "User deleted successfully" });
+    } else {
+      res.json({ success: false, message: "User not found" });
+    }
+  } catch (exception) {
+    console.error("Exception occurred:", exception);
   }
 };
