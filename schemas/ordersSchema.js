@@ -11,6 +11,8 @@ const order_schema = new mongoose.Schema({
   products: { type: Array, unique: false },
   quantity: { type: Number, unique: false },
   courier: { type: String, unique: false },
+  courierStatus: { type: String, unique: false },
+  courierInfo: { type: Object, unique: false },
   deliveryCharge: { type: Number, unique: false },
   discount: { type: Number, unique: false },
   total: { type: Number, unique: false },

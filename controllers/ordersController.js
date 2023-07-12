@@ -3,26 +3,21 @@ const { Parser } = require("json2csv");
 
 exports.getOrdersByFilter = async (req, res, next) => {
   try {
-    const { filter, courier } = req.query;
+    const { filter, courier, courierStatus } = req.query;
+    let filterOptions = {};
 
-    let orders = [];
-
-    // console.log(filter);
-    // console.log(courier);
-
-    if (filter === "all") {
-      orders = await order_model.find();
-    } else if (filter && courier) {
-      orders = await order_model.find({
-        orderStatus: filter,
-        courier: courier,
-      });
-    } else if (filter) {
-      orders = await order_model.find({ orderStatus: filter });
-    } else if (courier) {
-      orders = await order_model.find({ courier: courier });
+    if (filter !== "all") {
+      filterOptions.orderStatus = filter;
     }
-    // console.log(orders);
+    if (courier) {
+      filterOptions.courier = courier;
+    }
+    if (courierStatus) {
+      filterOptions.courierStatus = courierStatus;
+    }
+
+    const orders = await order_model.find(filterOptions);
+
     if (orders.length > 0) {
       res.json({ success: true, orders });
     } else {
@@ -156,6 +151,7 @@ exports.createOrder = async (req, res, next) => {
 exports.editOrderInfo = async (req, res, next) => {
   try {
     const {
+      orderId,
       image,
       name,
       phone,
@@ -164,6 +160,8 @@ exports.editOrderInfo = async (req, res, next) => {
       products,
       quantity,
       courier,
+      courierStatus,
+      courierInfo,
       deliveryCharge,
       discount,
       total,
@@ -176,6 +174,7 @@ exports.editOrderInfo = async (req, res, next) => {
     const order = await order_model.findById(req.query.id);
 
     if (order) {
+      order.orderId = orderId || order.orderId;
       order.image = image || order.image;
       order.name = name || order.name;
       order.phone = phone || order.phone;
@@ -184,6 +183,8 @@ exports.editOrderInfo = async (req, res, next) => {
       order.products = products || order.products;
       order.quantity = quantity || order.quantity;
       order.courier = courier || order.courier;
+      order.courierStatus = courierStatus || order.courierStatus;
+      order.courierInfo = courierInfo || order.courierInfo;
       order.deliveryCharge = deliveryCharge || order.deliveryCharge;
       order.discount = discount || order.discount;
       order.total = total || order.total;
@@ -242,5 +243,20 @@ exports.deleteOrderById = async (req, res, next) => {
     }
   } catch (exception) {
     console.error("Exception occurred in deleting order:", exception);
+  }
+};
+
+exports.getNewOrderId = async (req, res, next) => {
+  try {
+    const lastOrder = await order_model.findOne(
+      {},
+      {},
+      { sort: { timestamp: -1 } }
+    );
+    let lastOrderId = lastOrder ? parseInt(lastOrder.orderId) : 0;
+    const orderId = String(lastOrderId + 1).padStart(10, "0");
+    res.json({ success: true, orderId });
+  } catch (exception) {
+    console.error("Exception occurred in getting new order id:", exception);
   }
 };

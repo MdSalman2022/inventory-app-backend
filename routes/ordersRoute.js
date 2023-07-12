@@ -16,5 +16,6 @@ router.post("/create-order", ordersController.createOrder);
 router.put("/edit-order-info", ordersController.editOrderInfo);
 router.put("/edit-order-status", ordersController.orderStatusUpdateById);
 router.delete("/delete-order", ordersController.deleteOrderById);
+router.get("/get-new-orderid", ordersController.getNewOrderId);
 
 module.exports = router;
