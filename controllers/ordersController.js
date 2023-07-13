@@ -29,6 +29,31 @@ exports.getOrdersByFilter = async (req, res, next) => {
   }
 };
 
+exports.getOrdersByCustomerId = async (req, res, next) => {
+  try {
+    const { id } = req.query;
+    console.log(id);
+    const orders = await order_model.find({ customerId: id });
+
+    if (orders.length > 0) {
+      res.json({
+        success: true,
+        orders,
+        processing: orders.filter((item) => item.orderStatus === "processing"),
+        ready: orders.filter((item) => item.orderStatus === "ready"),
+        completed: orders.filter((item) => item.orderStatus === "completed"),
+        returned: orders.filter((item) => item.orderStatus === "returned"),
+        cancelled: orders.filter((item) => item.orderStatus === "cancelled"),
+      });
+    } else {
+      res.json({ success: false, message: "No orders found" });
+    }
+  } catch (exception) {
+    console.error("Exception occurred:", exception);
+    res.status(500).send(exception);
+  }
+};
+
 exports.exportOrders = async (req, res, next) => {
   try {
     const orders = await order_model.find();
