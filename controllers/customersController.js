@@ -3,11 +3,18 @@ const { Parser } = require("json2csv");
 
 exports.getCustomers = async (req, res, next) => {
   try {
-    const customers = await customer_model.find();
+    const { sellerid, storeid } = req.query;
 
-    // console.log(customers);
+    let query = { sellerId: sellerid };
+
+    if (storeid) {
+      query.storeId = storeid;
+    }
+
+    const customers = await customer_model.find(query);
+
     if (customers.length > 0) {
-      res.json({ success: true, customers });
+      res.json({ success: true, message: "Customers found", customers });
     } else {
       res.json({ success: false, message: "No customers found" });
     }
@@ -19,7 +26,15 @@ exports.getCustomers = async (req, res, next) => {
 
 exports.exportCustomers = async (req, res, next) => {
   try {
-    const customers = await customer_model.find();
+    const { sellerid, storeid } = req.query;
+
+    let query = { sellerId: sellerid };
+
+    if (storeid) {
+      query.storeId = storeid;
+    }
+
+    const customers = await customer_model.find(query);
 
     const flattenedData = customers.map((item) => ({
       _id: item._id,
@@ -55,7 +70,7 @@ exports.exportCustomers = async (req, res, next) => {
 exports.createCustomer = async (req, res, next) => {
   console.log(req.body);
   try {
-    const { name, image, phone, location, address, link } = req.body;
+    const { name, image, phone, location, address, link, sellerid } = req.body;
 
     const customer = new customer_model({
       customer_details: {
@@ -76,6 +91,8 @@ exports.createCustomer = async (req, res, next) => {
         completed: 0,
         returned: 0,
       },
+      sellerId: sellerid,
+      storeId: [],
       timestamp: new Date().toISOString(),
     });
 
@@ -172,20 +189,21 @@ exports.deleteCustomer = async (req, res, next) => {
 
 exports.getCustomerByNameOrPhone = async (req, res, next) => {
   try {
-    const { name, phonenumber } = req.query;
+    const { name, phonenumber, sellerid } = req.query;
 
-    let searchQuery;
-    console.log(name);
+    let searchQuery = { sellerId: sellerid };
 
     if (phonenumber) {
       // Search by phone number
-      searchQuery = { "customer_details.phone": phonenumber };
-    } else if (name) {
+      searchQuery["customer_details.phone"] = phonenumber;
+    }
+
+    if (name) {
       // Search by name (partial match)
-      searchQuery = {
-        "customer_details.name": { $regex: name, $options: "i" },
-      };
-    } else {
+      searchQuery["customer_details.name"] = { $regex: name, $options: "i" };
+    }
+
+    if (!phonenumber && !name) {
       return res
         .status(400)
         .json({ success: false, message: "Invalid search query" });

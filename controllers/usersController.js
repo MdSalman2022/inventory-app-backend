@@ -24,7 +24,7 @@ exports.getUser = async (req, res, next) => {
   console.log("uid", req.query.id);
   try {
     const user = await user_model.findOne({ authUid: req.query.id });
-    console.log("userinfo", user);
+    // console.log("userinfo", user);
     if (user) {
       res.json({ success: true, user });
     } else {
@@ -38,7 +38,7 @@ exports.getUser = async (req, res, next) => {
 
 exports.editUser = async (req, res, next) => {
   try {
-    const { username, email, authUid, verified, role } = req.body;
+    const { username, email, authUid, verified, role, status } = req.body;
 
     // console.log("edit user", req.body);
 
@@ -52,6 +52,7 @@ exports.editUser = async (req, res, next) => {
       user.authUid = authUid || user.authUid;
       user.verified = verified || user.verified;
       user.role = role || user.role;
+      user.status = status;
       user.timestamp = new Date().toISOString();
 
       const result = await user.save();
@@ -85,6 +86,7 @@ exports.createUser = async (req, res, next) => {
       email,
       authUid,
       verified: false,
+      status: true,
       timestamp: new Date().toISOString(),
     });
 

@@ -3,8 +3,8 @@ const { Parser } = require("json2csv");
 
 exports.getOrdersByFilter = async (req, res, next) => {
   try {
-    const { filter, courier, courierStatus } = req.query;
-    let filterOptions = {};
+    const { filter, courier, courierStatus, sellerid } = req.query;
+    let filterOptions = { sellerId: sellerid };
 
     if (filter !== "all") {
       filterOptions.orderStatus = filter;
@@ -56,7 +56,10 @@ exports.getOrdersByCustomerId = async (req, res, next) => {
 
 exports.exportOrders = async (req, res, next) => {
   try {
-    const orders = await order_model.find();
+    const { sellerid } = req.query;
+    let filterOptions = { sellerId: sellerid };
+
+    const orders = await order_model.find(filterOptions);
 
     function formatStockDate(isoTimestamp) {
       const date = new Date(isoTimestamp);
@@ -117,6 +120,9 @@ exports.createOrder = async (req, res, next) => {
       phone,
       address,
       district,
+      sellerid,
+      store,
+      storeid,
       products,
       quantity,
       courier,
@@ -127,6 +133,8 @@ exports.createOrder = async (req, res, next) => {
       cash,
       instruction,
     } = req.body;
+
+    console.log("store", store);
 
     const lastOrder = await order_model.findOne(
       {},
@@ -144,6 +152,9 @@ exports.createOrder = async (req, res, next) => {
       phone,
       address,
       district,
+      sellerId: sellerid,
+      store,
+      storeId: storeid,
       products,
       quantity,
       courier,
@@ -156,6 +167,8 @@ exports.createOrder = async (req, res, next) => {
       orderStatus: "processing",
       timestamp: new Date(),
     });
+
+    console.log(order);
 
     const result = await order.save();
 
@@ -185,6 +198,8 @@ exports.editOrderInfo = async (req, res, next) => {
       products,
       quantity,
       courier,
+      storeid,
+      store,
       courierStatus,
       courierInfo,
       deliveryCharge,
@@ -207,6 +222,8 @@ exports.editOrderInfo = async (req, res, next) => {
       order.district = district || order.district;
       order.products = products || order.products;
       order.quantity = quantity || order.quantity;
+      order.storeId = storeid || order.storeId;
+      order.store = store || order.store;
       order.courier = courier || order.courier;
       order.courierStatus = courierStatus || order.courierStatus;
       order.courierInfo = courierInfo || order.courierInfo;
@@ -260,7 +277,9 @@ exports.orderStatusUpdateById = async (req, res, next) => {
 exports.deleteOrderById = async (req, res, next) => {
   try {
     const orderId = req.query.id;
+    console.log(orderId);
     const result = await order_model.findByIdAndDelete(orderId);
+    console.log(result);
     if (result) {
       res.json({ success: true, message: "Order deleted successfully" });
     } else {

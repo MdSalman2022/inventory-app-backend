@@ -6,6 +6,7 @@ const user_schema = new mongoose.Schema({
   authUid: { type: String, unique: true },
   verified: { type: Boolean, unique: false },
   role: { type: String, unique: false },
+  status: { type: Boolean, unique: false },
   timestamp: { type: Date, unique: false },
 });
 

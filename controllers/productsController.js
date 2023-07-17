@@ -1,9 +1,18 @@
 const product_model = require("../schemas/productsSchema").products;
 const { Parser } = require("json2csv");
+const { ObjectId } = require("mongodb");
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await product_model.find();
+    const { sellerid, storeid } = req.query;
+
+    let query = { sellerId: sellerid };
+
+    if (storeid) {
+      query.storeId = storeid;
+    }
+
+    const products = await product_model.find(query);
 
     if (products.length > 0) {
       res.json({ success: true, products });
@@ -18,7 +27,15 @@ exports.getProducts = async (req, res, next) => {
 
 exports.exportProducts = async (req, res, next) => {
   try {
-    const products = await product_model.find();
+    const { sellerid, storeid } = req.query;
+
+    let query = { sellerId: sellerid };
+
+    if (storeid) {
+      query.storeId = storeid;
+    }
+
+    const products = await product_model.find(query);
 
     function formatStockDate(isoTimestamp) {
       const date = new Date(isoTimestamp);
@@ -65,12 +82,12 @@ exports.exportProducts = async (req, res, next) => {
 
 exports.searchProduct = async (req, res, next) => {
   try {
-    const { name } = req.query;
-    let searchQuery;
+    const { name, sellerid } = req.query;
+    let searchQuery = { name: { $regex: name, $options: "i" } };
 
-    searchQuery = {
-      name: { $regex: name, $options: "i" },
-    };
+    if (sellerid) {
+      searchQuery.sellerId = sellerid;
+    }
 
     const pipeline = [
       {
@@ -107,6 +124,9 @@ exports.createProduct = async (req, res, next) => {
       liftPrice,
       salePrice,
       qty,
+      sellerid,
+      supplierid,
+      storeid,
     } = req.body;
 
     const product = new product_model({
@@ -114,9 +134,12 @@ exports.createProduct = async (req, res, next) => {
       name,
       description,
       brand,
+      sellerId: sellerid,
       supplier,
+      supplierId: supplierid,
       country,
       store,
+      storeId: storeid,
       liftPrice,
       salePrice,
       qty,

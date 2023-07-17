@@ -21,7 +21,8 @@ const customer_schema = new mongoose.Schema({
     completed: { type: Number, unique: false },
     returned: { type: Number, unique: false },
   },
-
+  sellerId: { type: String, unique: false },
+  storeId: { type: Array, unique: false },
   timestamp: { type: Date, unique: false },
 });
 

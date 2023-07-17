@@ -17,6 +17,9 @@ const customersRoute = require("./routes/customersRoute");
 const ordersRoute = require("./routes/ordersRoute");
 const productsRoute = require("./routes/productsRoute");
 const usersRoute = require("./routes/usersRoute");
+const storeRoute = require("./routes/storeRoute");
+const employeeRoute = require("./routes/employeeRoute");
+const supplierRoute = require("./routes/supplierRoute");
 // const errorController = require("./controllers/error");
 
 // app.use(express.static(path.join(__dirname, "public")));
@@ -26,6 +29,10 @@ app.use("/customer", customersRoute);
 app.use("/order", ordersRoute);
 app.use("/product", productsRoute);
 app.use("/user", usersRoute);
+app.use("/store", storeRoute);
+app.use("/employee", employeeRoute);
+app.use("/supplier", supplierRoute);
+
 // app.use(errorController.get404);
 
 mongoose.connect(
