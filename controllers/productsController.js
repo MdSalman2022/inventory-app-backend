@@ -12,7 +12,11 @@ exports.getProducts = async (req, res, next) => {
       query.storeId = storeId;
     }
 
+    console.log(sellerId);
     const products = await product_model.find(query);
+
+    console.log(products);
+    console.log(products.length);
 
     if (products.length > 0) {
       res.json({ success: true, products });
