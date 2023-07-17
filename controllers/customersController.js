@@ -3,20 +3,22 @@ const { Parser } = require("json2csv");
 
 exports.getCustomers = async (req, res, next) => {
   try {
-    const { sellerid, storeid } = req.query;
+    const { sellerId, storeId } = req.query;
 
-    let query = { sellerId: sellerid };
+    let query = { sellerId: sellerId };
 
-    if (storeid) {
-      query.storeId = storeid;
+    if (storeId) {
+      query.storeId = storeId;
     }
 
     const customers = await customer_model.find(query);
 
+    console.log("customers", customers);
+
     if (customers.length > 0) {
       res.json({ success: true, message: "Customers found", customers });
     } else {
-      res.json({ success: false, message: "No customers found" });
+      res.json({ success: false, message: "No customers found", customers });
     }
   } catch (exception) {
     console.error("Exception occurred:", exception);
@@ -26,12 +28,12 @@ exports.getCustomers = async (req, res, next) => {
 
 exports.exportCustomers = async (req, res, next) => {
   try {
-    const { sellerid, storeid } = req.query;
+    const { sellerId, storeId } = req.query;
 
-    let query = { sellerId: sellerid };
+    let query = { sellerId: sellerId };
 
-    if (storeid) {
-      query.storeId = storeid;
+    if (storeId) {
+      query.storeId = storeId;
     }
 
     const customers = await customer_model.find(query);
@@ -70,7 +72,7 @@ exports.exportCustomers = async (req, res, next) => {
 exports.createCustomer = async (req, res, next) => {
   console.log(req.body);
   try {
-    const { name, image, phone, location, address, link, sellerid } = req.body;
+    const { name, image, phone, location, address, link, sellerId } = req.body;
 
     const customer = new customer_model({
       customer_details: {
@@ -91,7 +93,7 @@ exports.createCustomer = async (req, res, next) => {
         completed: 0,
         returned: 0,
       },
-      sellerId: sellerid,
+      sellerId: sellerId,
       storeId: [],
       timestamp: new Date().toISOString(),
     });
@@ -189,9 +191,9 @@ exports.deleteCustomer = async (req, res, next) => {
 
 exports.getCustomerByNameOrPhone = async (req, res, next) => {
   try {
-    const { name, phonenumber, sellerid } = req.query;
+    const { name, phonenumber, sellerId } = req.query;
 
-    let searchQuery = { sellerId: sellerid };
+    let searchQuery = { sellerId: sellerId };
 
     if (phonenumber) {
       // Search by phone number

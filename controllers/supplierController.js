@@ -2,9 +2,9 @@ const supplier_model = require("../schemas/supplierSchema").supplier;
 
 exports.getSupplier = async (req, res, next) => {
   try {
-    const { sellerid } = req.query;
+    const { sellerId } = req.query;
 
-    let query = { sellerId: sellerid };
+    let query = { sellerId: sellerId };
 
     const supplier = await supplier_model.find(query);
 

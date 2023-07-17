@@ -3,8 +3,8 @@ const { Parser } = require("json2csv");
 
 exports.getOrdersByFilter = async (req, res, next) => {
   try {
-    const { filter, courier, courierStatus, sellerid } = req.query;
-    let filterOptions = { sellerId: sellerid };
+    const { filter, courier, courierStatus, sellerId } = req.query;
+    let filterOptions = { sellerId: sellerId };
 
     if (filter !== "all") {
       filterOptions.orderStatus = filter;
@@ -56,8 +56,8 @@ exports.getOrdersByCustomerId = async (req, res, next) => {
 
 exports.exportOrders = async (req, res, next) => {
   try {
-    const { sellerid } = req.query;
-    let filterOptions = { sellerId: sellerid };
+    const { sellerId } = req.query;
+    let filterOptions = { sellerId: sellerId };
 
     const orders = await order_model.find(filterOptions);
 
@@ -120,9 +120,9 @@ exports.createOrder = async (req, res, next) => {
       phone,
       address,
       district,
-      sellerid,
+      sellerId,
       store,
-      storeid,
+      storeId,
       products,
       quantity,
       courier,
@@ -152,9 +152,9 @@ exports.createOrder = async (req, res, next) => {
       phone,
       address,
       district,
-      sellerId: sellerid,
+      sellerId: sellerId,
       store,
-      storeId: storeid,
+      storeId: storeId,
       products,
       quantity,
       courier,
@@ -198,7 +198,7 @@ exports.editOrderInfo = async (req, res, next) => {
       products,
       quantity,
       courier,
-      storeid,
+      storeId,
       store,
       courierStatus,
       courierInfo,
@@ -222,7 +222,7 @@ exports.editOrderInfo = async (req, res, next) => {
       order.district = district || order.district;
       order.products = products || order.products;
       order.quantity = quantity || order.quantity;
-      order.storeId = storeid || order.storeId;
+      order.storeId = storeId || order.storeId;
       order.store = store || order.store;
       order.courier = courier || order.courier;
       order.courierStatus = courierStatus || order.courierStatus;

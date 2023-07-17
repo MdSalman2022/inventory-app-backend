@@ -5,6 +5,7 @@ const courier_schema = new mongoose.Schema({
   chargeInDhaka: { type: Number, unique: false },
   chargeOutsideDhaka: { type: Number, unique: false },
   status: { type: Boolean, unique: false },
+  sellerId: { type: String, unique: false },
   updatedTimestamp: { type: Date, unique: false },
   timestamp: { type: Date, unique: false },
 });

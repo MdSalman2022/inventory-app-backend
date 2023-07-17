@@ -4,12 +4,12 @@ const { ObjectId } = require("mongodb");
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const { sellerid, storeid } = req.query;
+    const { sellerId, storeId } = req.query;
 
-    let query = { sellerId: sellerid };
+    let query = { sellerId: sellerId };
 
-    if (storeid) {
-      query.storeId = storeid;
+    if (storeId) {
+      query.storeId = storeId;
     }
 
     const products = await product_model.find(query);
@@ -27,12 +27,12 @@ exports.getProducts = async (req, res, next) => {
 
 exports.exportProducts = async (req, res, next) => {
   try {
-    const { sellerid, storeid } = req.query;
+    const { sellerId, storeId } = req.query;
 
-    let query = { sellerId: sellerid };
+    let query = { sellerId: sellerId };
 
-    if (storeid) {
-      query.storeId = storeid;
+    if (storeId) {
+      query.storeId = storeId;
     }
 
     const products = await product_model.find(query);
@@ -82,11 +82,11 @@ exports.exportProducts = async (req, res, next) => {
 
 exports.searchProduct = async (req, res, next) => {
   try {
-    const { name, sellerid } = req.query;
+    const { name, sellerId } = req.query;
     let searchQuery = { name: { $regex: name, $options: "i" } };
 
-    if (sellerid) {
-      searchQuery.sellerId = sellerid;
+    if (sellerId) {
+      searchQuery.sellerId = sellerId;
     }
 
     const pipeline = [
@@ -124,9 +124,9 @@ exports.createProduct = async (req, res, next) => {
       liftPrice,
       salePrice,
       qty,
-      sellerid,
+      sellerId,
       supplierid,
-      storeid,
+      storeId,
     } = req.body;
 
     const product = new product_model({
@@ -134,12 +134,12 @@ exports.createProduct = async (req, res, next) => {
       name,
       description,
       brand,
-      sellerId: sellerid,
+      sellerId: sellerId,
       supplier,
       supplierId: supplierid,
       country,
       store,
-      storeId: storeid,
+      storeId: storeId,
       liftPrice,
       salePrice,
       qty,
@@ -272,7 +272,7 @@ exports.deleteProduct = async (req, res, next) => {
     const productId = req.query.id;
     const product = await product_model.findById(productId);
     if (product) {
-      await product.remove();
+      await product_model.deleteOne({ _id: productId });
       res.json({ success: true, message: "Product deleted successfully" });
     } else {
       res.json({ success: false, message: "Product deletion failed" });

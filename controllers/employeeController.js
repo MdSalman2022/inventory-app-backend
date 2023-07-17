@@ -2,9 +2,9 @@ const employee_model = require("../schemas/employeeSchema").employee;
 
 exports.getEmployee = async (req, res, next) => {
   try {
-    const { sellerid } = req.query;
+    const { sellerId } = req.query;
 
-    let query = { sellerId: sellerid };
+    let query = { sellerId: sellerId };
 
     const employee = await employee_model.find(query);
 

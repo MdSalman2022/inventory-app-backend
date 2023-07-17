@@ -2,13 +2,17 @@ const courier_model = require("../schemas/couriersSchema").courier;
 
 exports.getCouriers = async (req, res, next) => {
   try {
-    const couriers = await courier_model.find();
+    const { sellerId } = req.query;
+
+    const query = { sellerId: sellerId };
+
+    const couriers = await courier_model.find(query);
 
     // console.log(couriers);
     if (couriers.length > 0) {
       res.json({ success: true, couriers });
     } else {
-      res.json({ success: false, message: "No couriers found" });
+      res.json({ success: false, message: "No couriers found", couriers });
     }
   } catch (exception) {
     console.error("Exception occurred:", exception);
@@ -19,13 +23,15 @@ exports.getCouriers = async (req, res, next) => {
 exports.createCourier = async (req, res, next) => {
   // console.log(req.body);
   try {
-    const { name, chargeInDhaka, chargeOutsideDhaka, status } = req.body;
+    const { name, chargeInDhaka, chargeOutsideDhaka, status, sellerId } =
+      req.body;
 
     const courier = new courier_model({
       name,
       chargeInDhaka,
       chargeOutsideDhaka,
       status,
+      sellerId,
       timestamp: new Date(),
     });
 
@@ -74,5 +80,21 @@ exports.editCourierInfo = async (req, res, next) => {
   } catch (exception) {
     console.error("Exception occurred:", exception);
     res.status(500).send(exception);
+  }
+};
+
+exports.deleteCourier = async (req, res, next) => {
+  try {
+    const { id } = req.query;
+
+    const result = await courier_model.findByIdAndDelete(id);
+
+    if (result) {
+      res.json({ success: true, message: "Courier deleted successfully" });
+    } else {
+      res.json({ success: false, message: "Courier deletion failed" });
+    }
+  } catch (exception) {
+    console.log(exception);
   }
 };

@@ -10,5 +10,6 @@ const router = express.Router();
 router.get("/get-couriers", couriersController.getCouriers);
 router.post("/create-courier", couriersController.createCourier);
 router.put("/edit-courier-info", couriersController.editCourierInfo);
+router.delete("/delete-courier", couriersController.deleteCourier);
 
 module.exports = router;

@@ -37,7 +37,7 @@ exports.getStoresBySellerId = async (req, res, next) => {
 
     const stores = await store_model.find({ sellerId: id });
 
-    console.log("stores ", stores);
+    // console.log("stores ", stores);
     if (stores.length > 0) {
       res.json({ success: true, stores });
     } else {
@@ -61,14 +61,14 @@ exports.createStore = async (req, res, next) => {
     return result;
   };
 
-  console.log(generateStoreId());
+  // console.log(generateStoreId());
   try {
     const {
       name,
       address,
       phone,
       district,
-      sellerid,
+      sellerId,
       sellerInfo,
       area,
       zip,
@@ -77,7 +77,7 @@ exports.createStore = async (req, res, next) => {
     const store = new store_model({
       name,
       storeId: generateStoreId(),
-      sellerId: sellerid,
+      sellerId: sellerId,
       sellerInfo,
       address,
       phone,
@@ -112,7 +112,7 @@ exports.editStore = async (req, res, next) => {
       steadfast_api_secret: secret,
       timestamp: Date.now(),
     });
-    console.log(result);
+    // console.log(result);
     res.json({ success: true, store: result });
   } catch (exception) {
     console.error("Exception occurred:", exception);
