@@ -70,7 +70,7 @@ exports.exportCustomers = async (req, res, next) => {
 };
 
 exports.createCustomer = async (req, res, next) => {
-  console.log(req.body);
+  console.log("new customer ", req.body);
   try {
     const { name, image, phone, location, address, link, sellerId } = req.body;
 
@@ -94,7 +94,6 @@ exports.createCustomer = async (req, res, next) => {
         returned: 0,
       },
       sellerId: sellerId,
-      storeId: [],
       timestamp: new Date().toISOString(),
     });
 
@@ -127,11 +126,15 @@ exports.editCustomerInfo = async (req, res, next) => {
       link,
       total,
       order,
+      storeId,
       processingCount,
       readyCount,
       completedCount,
       returnedCount,
     } = req.body;
+
+    console.log("edit customer ", req.body);
+    console.log("STORE ID", storeId);
 
     const customer = await customer_model.findById(req.query.id);
 
@@ -150,6 +153,12 @@ exports.editCustomerInfo = async (req, res, next) => {
       customer.purchase.total = total || customer.purchase.total;
       customer.purchase.last_purchase =
         new Date().toISOString() || customer.purchase.last_purchase;
+      if (!customer.storeId.includes(storeId)) {
+        customer.storeId.push(storeId);
+      }
+
+      // Ensure customer.storeId is initialized as an array
+      customer.storeId = customer.storeId || [];
 
       customer.orders.processing =
         processingCount || customer.orders.processing;

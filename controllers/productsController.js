@@ -15,8 +15,8 @@ exports.getProducts = async (req, res, next) => {
     console.log(sellerId);
     const products = await product_model.find(query);
 
-    console.log(products);
-    console.log(products.length);
+    // console.log(products);
+    // console.log(products.length);
 
     if (products.length > 0) {
       res.json({ success: true, products });
@@ -129,7 +129,7 @@ exports.createProduct = async (req, res, next) => {
       salePrice,
       qty,
       sellerId,
-      supplierid,
+      supplierId,
       storeId,
     } = req.body;
 
@@ -140,7 +140,7 @@ exports.createProduct = async (req, res, next) => {
       brand,
       sellerId: sellerId,
       supplier,
-      supplierId: supplierid,
+      supplierId,
       country,
       store,
       storeId: storeId,
@@ -171,8 +171,10 @@ exports.updateProduct = async (req, res, next) => {
       name,
       description,
       brand,
+      supplierId,
       supplier,
       country,
+      storeId,
       store,
       liftPrice,
       salePrice,
@@ -190,6 +192,8 @@ exports.updateProduct = async (req, res, next) => {
       product.supplier = supplier || product.supplier;
       product.country = country || product.country;
       product.store = store || product.store;
+      product.supplierId = supplierId || product.supplierId;
+      product.storeId = storeId || product.storeId;
       product.liftPrice = liftPrice || product.liftPrice;
       product.salePrice = salePrice || product.salePrice;
       product.qty = qty || product.qty;

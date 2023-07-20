@@ -6,10 +6,14 @@ exports.getSupplier = async (req, res, next) => {
 
     let query = { sellerId: sellerId };
 
-    const supplier = await supplier_model.find(query);
+    console.log("seller id ", sellerId);
 
-    if (supplier.length > 0) {
-      res.json({ success: true, supplier });
+    const suppliers = await supplier_model.find(query);
+
+    console.log("supplier ", suppliers);
+
+    if (suppliers.length > 0) {
+      res.json({ success: true, suppliers });
     } else {
       res.json({ success: false, message: "No supplier found" });
     }
@@ -21,7 +25,7 @@ exports.getSupplier = async (req, res, next) => {
 
 exports.createSupplier = async (req, res, next) => {
   try {
-    const { name, sellerId, phone, address, status, timestamp } = req.body;
+    const { name, sellerId, phone, address, status } = req.body;
 
     const supplier = new supplier_model({
       name,
@@ -29,7 +33,7 @@ exports.createSupplier = async (req, res, next) => {
       phone,
       address,
       status,
-      timestamp,
+      timestamp: new Date().toISOString(),
     });
 
     const result = await supplier.save();
@@ -50,18 +54,18 @@ exports.updateSupplier = async (req, res, next) => {
   try {
     const { id } = req.query;
 
-    const { name, sellerId, phone, address, status, timestamp } = req.body;
+    const { name, phone, address, status, timestamp } = req.body;
 
     const query = { _id: id };
 
     const update = {
       name,
-      sellerId,
       phone,
       address,
       status,
-      timestamp,
     };
+
+    console.log(update);
 
     const options = { new: true };
 
@@ -70,7 +74,7 @@ exports.updateSupplier = async (req, res, next) => {
       update,
       options
     );
-
+    console.log("result supplier ", result);
     if (result) {
       res.json({
         success: true,
@@ -90,7 +94,7 @@ exports.deleteSupplier = async (req, res, next) => {
     const query = { _id: id };
 
     const result = await supplier_model.findOneAndDelete(query);
-
+    console.log("delete", result);
     if (result) {
       res.json({
         success: true,
