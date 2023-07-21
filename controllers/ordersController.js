@@ -6,6 +6,11 @@ exports.getOrdersByFilter = async (req, res, next) => {
     const { filter, courier, courierStatus, sellerId } = req.query;
     let filterOptions = { sellerId: sellerId };
 
+    if (filter === "all") {
+      filterOptions.orderStatus = {
+        $in: ["processing", "ready", "completed", "returned", "cancelled"],
+      };
+    }
     if (filter !== "all") {
       filterOptions.orderStatus = filter;
     }
@@ -17,6 +22,9 @@ exports.getOrdersByFilter = async (req, res, next) => {
     }
 
     const orders = await order_model.find(filterOptions);
+
+    console.log("orders ", orders);
+    console.log("orders length ", orders?.length);
 
     if (orders.length > 0) {
       res.json({ success: true, orders });

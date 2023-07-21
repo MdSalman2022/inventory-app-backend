@@ -20,6 +20,46 @@ exports.getUsers = async (req, res, next) => {
   }
 };
 
+exports.getSellers = async (req, res, next) => {
+  try {
+    const users = await user_model.find({
+      //doesnt have sellerid
+      sellerId: { $exists: false },
+      Master: { $exists: false },
+    });
+    // console.log(users);
+
+    if (users) {
+      res.json({
+        success: true,
+        message: "Users fetched successfully",
+        users,
+      });
+    } else {
+      res.json({ success: false, message: "Users not found" });
+    }
+  } catch (exception) {
+    console.error("Exception occurred:", exception);
+    res.status(500).send(exception);
+  }
+};
+
+exports.getSeller = async (req, res, next) => {
+  console.log("_id", req.query.id);
+  try {
+    const user = await user_model.findById(req.query.id);
+    // console.log("userinfo", user);
+    if (user) {
+      res.json({ success: true, user });
+    } else {
+      res.json({ success: false, message: "User not found" });
+    }
+  } catch (exception) {
+    console.error("Exception occurred:", exception);
+    res.status(500).send(exception);
+  }
+};
+
 exports.getEmployees = async (req, res, next) => {
   try {
     const { sellerId } = req.query;
