@@ -27,8 +27,8 @@ exports.getEmployee = async (req, res, next) => {
 
 exports.createEmployee = async (req, res, next) => {
   try {
-    const { username, email, password, sellerId, status, role, timestamp } =
-      req.body;
+    const { sellerId } = req.query;
+    const { username, email, password, status, role, timestamp } = req.body;
 
     const employee = new employee_model({
       username,

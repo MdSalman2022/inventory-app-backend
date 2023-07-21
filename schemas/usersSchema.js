@@ -5,6 +5,7 @@ const user_schema = new mongoose.Schema({
   email: { type: String, unique: false },
   authUid: { type: String, unique: true },
   verified: { type: Boolean, unique: false },
+  sellerId: { type: String, unique: false },
   role: { type: String, unique: false },
   status: { type: Boolean, unique: false },
   timestamp: { type: Date, unique: false },
