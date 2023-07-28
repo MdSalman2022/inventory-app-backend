@@ -49,7 +49,7 @@ exports.createCourier = async (req, res, next) => {
 };
 exports.editCourierInfo = async (req, res, next) => {
   try {
-    const { name, chargeInDhaka, chargeOutsideDhaka, status } = req.body;
+    const { name,api,secret, chargeInDhaka, chargeOutsideDhaka, status } = req.body;
     const courier = await courier_model.findById(req.query.id);
 
     console.log(courier);
@@ -57,6 +57,8 @@ exports.editCourierInfo = async (req, res, next) => {
 
     if (courier) {
       courier.name = name || courier.name;
+      courier.api = api || courier.api;
+      courier.secret = secret || courier.secret;
       courier.chargeInDhaka = chargeInDhaka || courier.chargeInDhaka;
       courier.chargeOutsideDhaka =
         chargeOutsideDhaka || courier.chargeOutsideDhaka;
