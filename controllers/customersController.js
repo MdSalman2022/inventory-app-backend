@@ -182,6 +182,51 @@ exports.editCustomerInfo = async (req, res, next) => {
   }
 };
 
+exports.updateOrderCount = async (req, res, next) => {
+  try {
+    const {
+      processingCount,
+      readyCount,
+      completedCount,
+      returnedCount,
+      cancelledCount,
+    } = req.body;
+
+    const customer = await customer_model.findById(req.query.id);
+
+    console.log("order count by customer update");
+
+    if (customer) {
+      if (processingCount) {
+        customer.orders.processing += 1;
+        customer.orders.ready -= 1;
+      } else if (readyCount) {
+        customer.orders.processing -= 1;
+        customer.orders.ready += 1;
+      } else if (completedCount) {
+        customer.orders.ready -= 1;
+        customer.orders.completed += 1;
+      } else if (returnedCount) {
+        customer.orders.completed -= 1;
+        customer.orders.returned += 1;
+      } else if (cancelledCount) {
+        customer.orders.ready -= 1;
+        customer.orders.cancelled += 1;
+      }
+    }
+
+    const result = await customer.save();
+
+    if (result) {
+      res.json({ success: true, message: "Customer updated successfully" });
+    } else {
+      res.json({ success: false, message: "Customer update failed" });
+    }
+  } catch (exception) {
+    console.error("Exception occurred:", exception);
+  }
+};
+
 exports.deleteCustomer = async (req, res, next) => {
   try {
     const customerId = req.query.id;

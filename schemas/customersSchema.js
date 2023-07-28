@@ -17,9 +17,9 @@ const customer_schema = new mongoose.Schema({
   orders: {
     processing: { type: Number, unique: false },
     ready: { type: Number, unique: false },
-
     completed: { type: Number, unique: false },
     returned: { type: Number, unique: false },
+    cancelled: { type: Number, unique: false },
   },
   sellerId: { type: String, unique: false },
   storeId: { type: Array, unique: false },

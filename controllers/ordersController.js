@@ -37,6 +37,25 @@ exports.getOrdersByFilter = async (req, res, next) => {
   }
 };
 
+exports.searchOrder = async (req, res, next) => {
+  try {
+    const { orderId, sellerId } = req.query;
+
+    const orders = await order_model.find({
+      orderId: orderId,
+      sellerId: sellerId,
+    });
+
+    if (orders.length > 0) {
+      res.json({ success: true, orders });
+    } else {
+      res.json({ success: false, message: "No order found" });
+    }
+  } catch (exception) {
+    console.error("Exception occurred:", exception);
+  }
+};
+
 exports.getOrdersByCustomerId = async (req, res, next) => {
   try {
     const { id } = req.query;
@@ -270,6 +289,7 @@ exports.orderStatusUpdateById = async (req, res, next) => {
         res.json({
           success: true,
           message: "Order status updated successfully",
+          order,
         });
       } else {
         res.json({ success: false, message: "Order status update failed" });

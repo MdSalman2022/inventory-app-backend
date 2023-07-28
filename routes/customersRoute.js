@@ -15,6 +15,7 @@ router.get("/search-customer", customersController.getCustomerByNameOrPhone);
 router.get("/get-customer-by-id", customersController.getCustomerById);
 router.post("/create-customer", customersController.createCustomer);
 router.put("/edit-customer-info", customersController.editCustomerInfo);
+router.put("/update-order-count", customersController.updateOrderCount);
 router.delete("/delete-customer", customersController.deleteCustomer);
 
 module.exports = router;
