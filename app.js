@@ -20,6 +20,7 @@ const usersRoute = require("./routes/usersRoute");
 const storeRoute = require("./routes/storeRoute");
 const employeeRoute = require("./routes/employeeRoute");
 const supplierRoute = require("./routes/supplierRoute");
+const userLogsRoute = require("./routes/userLogsRoute");
 // const errorController = require("./controllers/error");
 
 // app.use(express.static(path.join(__dirname, "public")));
@@ -32,6 +33,7 @@ app.use("/user", usersRoute);
 app.use("/store", storeRoute);
 app.use("/employee", employeeRoute);
 app.use("/supplier", supplierRoute);
+app.use("/userlog", userLogsRoute);
 
 // app.use(errorController.get404);
 

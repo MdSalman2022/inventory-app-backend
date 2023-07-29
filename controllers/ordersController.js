@@ -55,6 +55,32 @@ exports.searchOrder = async (req, res, next) => {
     console.error("Exception occurred:", exception);
   }
 };
+exports.searchOrderByName = async (req, res, next) => {
+  try {
+    const { name, sellerId } = req.query;
+    const searchRegex = new RegExp(`.*${name}.*`, "i");
+
+    const searchQuery = {
+      sellerId: sellerId,
+      name: searchRegex,
+    };
+
+    console.log(searchQuery);
+
+    const orders = await order_model.find(searchQuery);
+
+    console.log(orders);
+
+    if (orders.length > 0) {
+      res.json({ success: true, orders });
+    } else {
+      res.json({ success: false, message: "No order found" });
+    }
+  } catch (exception) {
+    console.error("Exception occurred:", exception);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
 
 exports.getOrdersByCustomerId = async (req, res, next) => {
   try {
@@ -159,6 +185,8 @@ exports.createOrder = async (req, res, next) => {
       advance,
       cash,
       instruction,
+      createdBy,
+      createdById,
     } = req.body;
 
     console.log("store", store);
@@ -191,6 +219,8 @@ exports.createOrder = async (req, res, next) => {
       advance,
       cash,
       instruction,
+      createdBy,
+      createdById,
       orderStatus: "processing",
       timestamp: new Date(),
     });
@@ -236,9 +266,19 @@ exports.editOrderInfo = async (req, res, next) => {
       cash,
       instruction,
       orderStatus,
+      updatedBy,
+      updatedById,
+      update,
     } = req.body;
 
     const order = await order_model.findById(req.query.id);
+
+    updatedInfo = {
+      update: update || order.update,
+      updatedBy: updatedBy || order.updatedBy,
+      updatedById: updatedById || order.updatedById,
+      timestamp: new Date(),
+    };
 
     if (order) {
       order.orderId = orderId || order.orderId;
@@ -261,6 +301,7 @@ exports.editOrderInfo = async (req, res, next) => {
       order.cash = cash || order.cash;
       order.instruction = instruction || order.instruction;
       order.orderStatus = orderStatus || order.orderStatus;
+      order.updated.push(updatedInfo);
 
       const result = await order.save();
 
@@ -280,10 +321,19 @@ exports.editOrderInfo = async (req, res, next) => {
 exports.orderStatusUpdateById = async (req, res, next) => {
   try {
     const orderId = req.query.id;
-    const orderStatus = req.body.orderStatus;
+    const { update, updatedBy, updatedById, orderStatus } = req.body;
     const order = await order_model.findById(orderId);
+
+    updatedInfo = {
+      update: update || order.update,
+      updatedBy: updatedBy || order.updatedBy,
+      updatedById: updatedById || order.updatedById,
+      timestamp: new Date(),
+    };
+
     if (order) {
       order.orderStatus = orderStatus;
+      order.updated.push(updatedInfo);
       const result = await order.save();
       if (result) {
         res.json({

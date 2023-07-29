@@ -12,6 +12,7 @@ const router = express.Router();
 
 router.get("/get-orders", ordersController.getOrdersByFilter);
 router.get("/search-order", ordersController.searchOrder);
+router.get("/search-order-by-name", ordersController.searchOrderByName);
 router.get("/get-orders-by-customer", ordersController.getOrdersByCustomerId);
 router.get("/order-export", ordersController.exportOrders);
 router.post("/create-order", ordersController.createOrder);
