@@ -1,0 +1,21 @@
+service: inventory-backend
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  memorySize: 2048
+  stage: dev
+  timeout: 15
+  region: ap-south-1
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - http: ANY /{proxy+}
+      - http: ANY /
+    environment:
+      MONGODB_URI: mongodb+srv://inventoryApp:2WgofgBZ2dp1HzZU@cluster0.cwkrobe.mongodb.net/?retryWrites=true&w=majority
+      DB_NAME: inventoryApp
+      DB_PASS: 2WgofgBZ2dp1HzZU

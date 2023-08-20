@@ -23,8 +23,8 @@ exports.getOrdersByFilter = async (req, res, next) => {
 
     const orders = await order_model.find(filterOptions);
 
-    console.log("orders ", orders);
-    console.log("orders length ", orders?.length);
+    // console.log("orders ", orders);
+    // console.log("orders length ", orders?.length);
 
     if (orders.length > 0) {
       res.json({ success: true, orders });
@@ -69,7 +69,7 @@ exports.searchOrderByName = async (req, res, next) => {
 
     const orders = await order_model.find(searchQuery);
 
-    console.log(orders);
+    // console.log(orders);
 
     if (orders.length > 0) {
       res.json({ success: true, orders });
@@ -106,13 +106,23 @@ exports.getOrdersByCustomerId = async (req, res, next) => {
     res.status(500).send(exception);
   }
 };
-
 exports.exportOrders = async (req, res, next) => {
   try {
-    const { sellerId } = req.query;
-    let filterOptions = { sellerId: sellerId };
+    const { orderIds } = req.query;
+
+    const filterOptions = {
+      _id: { $in: orderIds.split(",") }, // Split and convert to an array
+    };
+
+    console.log("my filter ", filterOptions);
 
     const orders = await order_model.find(filterOptions);
+
+    console.log("orders ", orders);
+
+    if (orders.length === 0) {
+      return res.json({ success: false, message: "No orders found" });
+    }
 
     function formatStockDate(isoTimestamp) {
       const date = new Date(isoTimestamp);
@@ -124,6 +134,7 @@ exports.exportOrders = async (req, res, next) => {
 
       return formattedDate;
     }
+
     const flattenedData = orders.map((item) => ({
       _id: item._id,
       orderId: item.orderId,
@@ -144,19 +155,17 @@ exports.exportOrders = async (req, res, next) => {
       orderStatus: "processing",
       timestamp: formatStockDate(item.timestamp),
     }));
-    const filename = "customer_list.csv";
 
+    const filename = "order_list.csv";
+
+    const { Parser } = require("json2csv");
     const json2csvParser = new Parser();
     const csvData = json2csvParser.parse(flattenedData);
 
     res.setHeader("Content-Type", "text/csv");
     res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
 
-    if (orders.length > 0) {
-      res.send(csvData);
-    } else {
-      res.json({ success: false, message: "No customers found" });
-    }
+    res.send(csvData);
   } catch (exception) {
     console.error("Exception occurred:", exception);
     res.status(500).send(exception);
@@ -189,7 +198,7 @@ exports.createOrder = async (req, res, next) => {
       createdById,
     } = req.body;
 
-    console.log("store", store);
+    // console.log("store", store);
 
     const lastOrder = await order_model.findOne(
       {},
@@ -225,7 +234,7 @@ exports.createOrder = async (req, res, next) => {
       timestamp: new Date(),
     });
 
-    console.log(order);
+    // console.log(order);
 
     const result = await order.save();
 
