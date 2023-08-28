@@ -98,24 +98,41 @@ exports.getUser = async (req, res, next) => {
 
 exports.editUser = async (req, res, next) => {
   try {
-    const { username, email, authUid, verified, role } = req.body;
+    const {
+      username,
+      email,
+      authUid,
+      verified,
+      role,
+      phone,
+      address,
+      city,
+      image,
+    } = req.body;
 
     // console.log("edit user", req.body);
 
     const user = await user_model.findOne({ authUid: req.query.id });
 
-    console.log(user);
+    console.log("found user ", user);
 
+    console.log("body ", req.body);
+
+    console.log("IMAGE ", image);
     if (user) {
+      user.image = image || user.image;
       user.username = username || user.username;
       user.email = email || user.email;
       user.authUid = authUid || user.authUid;
       user.verified = verified || user.verified;
       user.role = role || user.role;
+      user.phone = phone || user.phone;
+      user.address = address || user.address;
+      user.city = city || user.city;
       user.timestamp = new Date().toISOString();
 
       const result = await user.save();
-      console.log(result);
+      console.log("user updated ", result);
 
       if (result) {
         res.json({

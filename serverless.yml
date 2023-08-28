@@ -1,3 +1,5 @@
+org: mdsalman
+app: inventory-backend
 service: inventory-backend
 frameworkVersion: "3"
 
