@@ -72,7 +72,8 @@ exports.exportCustomers = async (req, res, next) => {
 exports.createCustomer = async (req, res, next) => {
   console.log("new customer ", req.body);
   try {
-    const { name, image, phone, location, address, link, sellerId } = req.body;
+    const { name, image, phone, location, thana, address, link, sellerId } =
+      req.body;
 
     const customer = new customer_model({
       customer_details: {
@@ -81,6 +82,7 @@ exports.createCustomer = async (req, res, next) => {
         phone,
         location,
         address,
+        thana,
         link,
       },
       purchase: {
@@ -98,7 +100,7 @@ exports.createCustomer = async (req, res, next) => {
     });
 
     const result = await customer.save();
-    console.log(result);
+    console.log("customer result", result);
 
     if (result) {
       res.json({

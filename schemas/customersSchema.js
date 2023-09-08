@@ -6,7 +6,7 @@ const customer_schema = new mongoose.Schema({
     image: { type: String, unique: false },
     phone: { type: String, unique: false },
     location: { type: String, unique: false },
-
+    thana: { type: String, unique: false },
     address: { type: String, unique: false },
     link: { type: String, unique: false },
   },

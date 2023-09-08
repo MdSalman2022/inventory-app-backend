@@ -93,6 +93,8 @@ exports.searchProduct = async (req, res, next) => {
       searchQuery.sellerId = sellerId;
     }
 
+    console.log("first", name, sellerId);
+
     const pipeline = [
       {
         $match: searchQuery,
@@ -102,7 +104,8 @@ exports.searchProduct = async (req, res, next) => {
       },
     ];
 
-    const products = await product_model.aggregate(pipeline).toArray();
+    const products = await product_model.aggregate(pipeline);
+    console.log("products", products);
 
     if (products.length > 0) {
       res.json({ success: true, products });

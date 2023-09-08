@@ -180,6 +180,8 @@ exports.createOrder = async (req, res, next) => {
       image,
       name,
       phone,
+      refNo,
+      paymentType,
       address,
       district,
       sellerId,
@@ -196,24 +198,40 @@ exports.createOrder = async (req, res, next) => {
       instruction,
       createdBy,
       createdById,
+      salesDate,
     } = req.body;
 
     // console.log("store", store);
 
+    /*     const lastOrder = await order_model.findOne(
+      {},
+      {},
+      { sort: { timestamp: -1 } }
+    ); */
+    // let lastOrderId = lastOrder ? parseInt(lastOrder.orderId) : 0;
+    // const orderId = String(lastOrderId + 1).padStart(10, "0");
     const lastOrder = await order_model.findOne(
       {},
       {},
       { sort: { timestamp: -1 } }
     );
     let lastOrderId = lastOrder ? parseInt(lastOrder.orderId) : 0;
-    const orderId = String(lastOrderId + 1).padStart(10, "0");
+
+    // Check if lastOrderId is less than 1000 (or any other starting value you prefer)
+    if (lastOrderId < 1000) {
+      lastOrderId = 1000;
+    } else {
+      lastOrderId += 1;
+    }
 
     const order = new order_model({
-      orderId,
+      orderId: lastOrderId,
       customerId,
       image,
       name,
       phone,
+      refNo,
+      paymentType,
       address,
       district,
       sellerId: sellerId,
@@ -231,6 +249,7 @@ exports.createOrder = async (req, res, next) => {
       createdBy,
       createdById,
       orderStatus: "processing",
+      salesDate,
       timestamp: new Date(),
     });
 

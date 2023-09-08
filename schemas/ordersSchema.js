@@ -12,6 +12,8 @@ const order_schema = new mongoose.Schema({
   orderId: { type: String, unique: false },
   name: { type: String, unique: false },
   phone: { type: String, unique: false },
+  refNo: { type: String, unique: false },
+  paymentType: { type: String, unique: false },
   address: { type: String, unique: false },
   image: { type: String, unique: false },
   district: { type: String, unique: false },
@@ -33,6 +35,7 @@ const order_schema = new mongoose.Schema({
   cash: { type: Number, unique: false },
   instruction: { type: String, unique: false },
   orderStatus: { type: String, unique: false },
+  salesDate: { type: String, unique: false },
   timestamp: { type: Date, unique: false },
 });
 
