@@ -15,6 +15,7 @@ const order_schema = new mongoose.Schema({
   refNo: { type: String, unique: false },
   paymentType: { type: String, unique: false },
   address: { type: String, unique: false },
+  thana: { type: String, unique: false },
   image: { type: String, unique: false },
   district: { type: String, unique: false },
   sellerId: { type: String, unique: false },
