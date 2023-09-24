@@ -223,6 +223,9 @@ exports.updateProductQty = async (req, res, next) => {
     const productIds = req.body.productIds; // Array of product IDs
     const availableQtyIncrements = req.body.availableQtyIncrements; // Array of availableQty increments
 
+    console.log("product ids", productIds);
+    console.log("available qty", availableQtyIncrements);
+
     if (productIds.length !== availableQtyIncrements.length) {
       return res.status(400).json({
         success: false,
@@ -239,7 +242,7 @@ exports.updateProductQty = async (req, res, next) => {
     }));
 
     // Update the products with the provided product IDs
-    const result = await productsCollection.bulkWrite(updates);
+    const result = await product_model.bulkWrite(updates);
 
     if (result.modifiedCount > 0) {
       res.json({ success: true, message: "Products updated successfully" });

@@ -282,6 +282,7 @@ exports.editOrderInfo = async (req, res, next) => {
       phone,
       address,
       district,
+      thana,
       products,
       quantity,
       courier,
@@ -317,6 +318,7 @@ exports.editOrderInfo = async (req, res, next) => {
       order.phone = phone || order.phone;
       order.address = address || order.address;
       order.district = district || order.district;
+      order.thana = thana || order.thana;
       order.products = products || order.products;
       order.quantity = quantity || order.quantity;
       order.storeId = storeId || order.storeId;
