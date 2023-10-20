@@ -124,6 +124,7 @@ exports.editCustomerInfo = async (req, res, next) => {
       name,
       phone,
       location,
+      thana,
       address,
       link,
       total,
@@ -148,6 +149,8 @@ exports.editCustomerInfo = async (req, res, next) => {
         phone || customer.customer_details.phone;
       customer.customer_details.location =
         location || customer.customer_details.location;
+      customer.customer_details.thana =
+        thana || customer.customer_details.thana;
       customer.customer_details.address =
         address || customer.customer_details.address;
       customer.customer_details.link = link || customer.customer_details.link;

@@ -3,7 +3,7 @@ const { Parser } = require("json2csv");
 
 exports.getOrdersByFilter = async (req, res, next) => {
   try {
-    const { filter, courier, courierStatus, sellerId } = req.query;
+    const { filter, courier, courierStatus, sellerId, page, limit } = req.query;
     let filterOptions = { sellerId: sellerId };
 
     if (filter === "all") {
@@ -20,14 +20,25 @@ exports.getOrdersByFilter = async (req, res, next) => {
     if (courierStatus) {
       filterOptions.courierStatus = courierStatus;
     }
+    const sortOptions = courierStatus
+      ? { "courierInfo.consignment.created_at": -1 }
+      : { timestamp: -1 };
 
-    const orders = await order_model.find(filterOptions);
+    const orders = await order_model
+      .find(filterOptions)
+      .sort(sortOptions)
+      .skip((page - 1) * limit)
+      .limit(parseInt(limit));
 
-    // console.log("orders ", orders);
-    // console.log("orders length ", orders?.length);
+    const totalOrders = await order_model.countDocuments(filterOptions);
 
     if (orders.length > 0) {
-      res.json({ success: true, orders });
+      res.json({
+        success: true,
+        orders,
+        totalPages: Math.ceil(totalOrders / limit),
+        currentPage: parseInt(page),
+      });
     } else {
       res.json({ success: false, message: "No orders found" });
     }
